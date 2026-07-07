@@ -21,8 +21,8 @@ kotlin {
         jvmMain.dependencies {
             // currentOs brings the desktop runtime (skiko) + foundation + ui + material.
             implementation(compose.desktop.currentOs)
-            implementation("org.jetbrains.compose.material3:material3:${libs.versions.compose.multiplatform.get()}")
-            implementation("org.jetbrains.compose.material:material-icons-extended:${libs.versions.compose.multiplatform.get()}")
+            implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
 
             // Navigation (multiplatform, same as Mihon Android).
             implementation(libs.bundles.voyager)
@@ -31,7 +31,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             // Image loading (covers + reader pages) from Suwayomi REST endpoints.
-            implementation("org.jetbrains.compose.components:components-resources:${libs.versions.compose.multiplatform.get()}")
+            implementation(compose.components.resources)
             implementation(libs.coil.compose)
             implementation(libs.coil.core)
             implementation(libs.coil.network.okhttp)
