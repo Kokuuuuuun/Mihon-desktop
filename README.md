@@ -52,6 +52,8 @@ runs and download the artifact you need.
 
 ## Roadmap — coming soon
 
+> The user interface is an early, work-in-progress preview and **will be greatly improved in the future**. It is subject to many changes — some of which may match the original Mihon design, and some which may not. Built and tested with **Java 21**.
+
 The following desktop-specific work is planned and not yet implemented:
 
 * **Full local-source parity** — first-class reading of local files / archives without a server.
@@ -65,7 +67,7 @@ The following desktop-specific work is planned and not yet implemented:
 
 ## Building from source
 
-Requirements: **JDK 17** and an internet connection.
+Requirements: **JDK 21** (built and tested with Java 21) and an internet connection.
 
 ```bash
 git clone https://github.com/Kokuuuuuun/Text-desktop
