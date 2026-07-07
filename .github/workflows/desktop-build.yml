@@ -1,0 +1,88 @@
+name: Desktop Build
+
+on:
+  push:
+    branches:
+      - desktop
+      - main
+    paths:
+      - 'desktop/**'
+      - 'core/**'
+      - 'core-metadata/**'
+      - 'data/**'
+      - 'domain/**'
+      - 'source-api/**'
+      - 'presentation-core/**'
+      - 'gradle/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - '.github/workflows/desktop-build.yml'
+  pull_request:
+    branches:
+      - desktop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-desktop:
+    name: Build Desktop (AppImage / tar.gz / deb)
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Install Linux packaging tooling
+        run: |
+          sudo apt-get update
+          # jpackage needs these to build .deb packages on Linux.
+          sudo apt-get install -y dpkg-dev fakeroot file
+
+      - name: Build AppImage + Deb
+        run: ./gradlew :desktop:packageDistributionForCurrentOS
+
+      - name: Collect AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: mihon-desktop-AppImage-${{ github.sha }}
+          path: desktop/build/compose/binaries/main/app/mihon-desktop-*/*.AppImage
+          if-no-files-found: error
+
+      - name: Collect Deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: mihon-desktop-deb-${{ github.sha }}
+          path: desktop/build/compose/binaries/main/deb/*.deb
+          if-no-files-found: error
+
+      - name: Build portable tar.gz from app-image
+        run: |
+          set -euo pipefail
+          BUILD_DIR="desktop/build/compose/binaries/main/app"
+          # The Compose plugin appends a versioned directory (mihon-desktop-1.0.0).
+          IMAGE_DIR="$(find "$BUILD_DIR" -maxdepth 1 -type d -name 'mihon-desktop-*' | head -n1)"
+          if [ -z "${IMAGE_DIR}" ]; then
+            echo "App-image directory not found"; exit 1
+          fi
+          BASENAME="$(basename "${IMAGE_DIR}")"
+          cd "$BUILD_DIR"
+          tar -czf "${BASENAME}.tar.gz" "$BASENAME"
+          echo "Created ${BUILD_DIR}/${BASENAME}.tar.gz"
+
+      - name: Collect tar.gz
+        uses: actions/upload-artifact@v4
+        with:
+          name: mihon-desktop-portable-targz-${{ github.sha }}
+          path: desktop/build/compose/binaries/main/app/*.tar.gz
+          if-no-files-found: error

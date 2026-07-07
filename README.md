@@ -1,78 +1,119 @@
 <div align="center">
 
 <a href="https://mihon.app">
-    <img src="./.github/assets/logo.png" alt="Mihon logo" title="Mihon logo" width="80"/>
+    <img src="./.github/assets/logo.png" alt="Mihon Desktop logo" title="Mihon Desktop logo" width="80"/>
 </a>
 
-# Mihon [App](#)
+# Mihon Desktop [App](#)
 
-### Full-featured reader
-Discover and read manga, webtoons, comics, and more – easier than ever on your Android device.
+### Desktop fork of Mihon
 
-[![Discord server](https://img.shields.io/discord/1195734228319617024.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.gg/mihon)
-[![GitHub downloads](https://img.shields.io/github/downloads/mihonapp/mihon/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://mihon.app/download)
+Discover and read manga, webtoons and comics on **Linux** — a desktop port of the
+[Mihon](https://github.com/mihonapp/mihon) Android reader, built with KDE Multiplatform's
+[Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) and an embedded
+[Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server) backend.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/mihonapp/mihon/build.yml?labelColor=27303D)](https://github.com/mihonapp/mihon/actions/workflows/build_push.yml)
-[![License: Apache-2.0](https://img.shields.io/github/license/mihonapp/mihon?labelColor=27303D&color=0877d2)](/LICENSE)
-[![Translation status](https://img.shields.io/weblate/progress/mihon?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/mihon/)
+[![CI](https://img.shields.io/github/actions/workflow/status/Kokuuuuuun/Text-desktop/desktop-build.yml?label=Desktop%20CI&labelColor=27303D)](https://github.com/Kokuuuuuun/Text-desktop/actions/workflows/desktop-build.yml)
+[![License: Apache-2.0](https://img.shields.io/github/license/Kokuuuuuun/Text-desktop?labelColor=27303D&color=0877d2)](/LICENSE)
+
+This is an independent community port of Mihon for the desktop. It is **not** affiliated with,
+endorsed by, or officially maintained by the Mihon Open Source Project. All credit for the reader,
+UI and source-engine architecture goes to the Mihon contributors.
 
 ## Download
 
-[![Mihon Stable](https://img.shields.io/github/release/mihonapp/mihon.svg?maxAge=3600&label=Stable&labelColor=06599d&color=043b69)](https://mihon.app/download)
-[![Mihon Beta](https://img.shields.io/github/v/release/mihonapp/mihon-preview.svg?maxAge=3600&label=Beta&labelColor=2c2c47&color=1c1c39)](https://mihon.app/download)
+Build artifacts are produced automatically by GitHub Actions for every push to the
+`desktop` branch:
 
-*Requires Android 8.0 or higher.*
+* **AppImage** — portable single-file runtime, just `chmod +x` and run.
+* **tar.gz** — portable archive containing the bundled app-image + JVM runtime.
+* **deb** — Debian / Ubuntu system package.
+
+Grab the latest build from the
+[Actions → Desktop Build](https://github.com/Kokuuuuuun/Text-desktop/actions/workflows/desktop-build.yml)
+runs and download the artifact you need.
+
+> **Note:** The Linux packages bundle their own Java runtime, so no system JDK is required to run the
+> AppImage or the tar.gz bundle. The `.deb` installs under `/opt/mihon-desktop`.
 
 ## Features
 
 <div align="left">
 
-* Local reading of content.
-* A configurable reader with multiple viewers, reading directions and other settings.
-* Tracker support: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/), [Kitsu](https://kitsu.app/), [MangaUpdates](https://mangaupdates.com), [Shikimori](https://shikimori.one), and [Bangumi](https://bgm.tv/) support.
-* Categories to organize your library.
-* Light and dark themes.
-* Schedule updating your library for new chapters.
-* Create backups locally to read offline or to your desired cloud service.
-* Plus much more...
+* Cross-platform desktop reader targeting **Linux** (AppImage / deb / portable tar.gz).
+* Compose Multiplatform UI reusing Mihon's themes, colour schemes and typography.
+* Embeds and manages a local **Suwayomi-Server** instance automatically on launch.
+* Library, browse, updates, history, downloads and reader screens.
+* Coil-based image loading of covers and reader pages over the Suwayomi REST/GraphQL bridge.
+* System-tray integration (`Tray` is enabled only on supported platforms via `isTraySupported`).
+* Local-first design backed by the Mihon `domain` / `data` layer.
 
 </div>
 
+## Roadmap — coming soon
+
+The following desktop-specific work is planned and not yet implemented:
+
+* **Full local-source parity** — first-class reading of local files / archives without a server.
+* **Offline database** — a native desktop backing store (replacing the in-memory Suwayomi bridge).
+* **Updater** — in-app self-update checking GitHub releases for new desktop builds.
+* **Windows / macOS builds** — currently only Linux packaging is wired in the CI workflow.
+* **Cloud backups & trackers** — restore MAL / AniList / Kitsu / Shikimori sync.
+* **Keyboard / gamepad reader controls** — full keybinding customisation remap.
+* **Window multi-instance** — opening multiple manga / reader windows side by side.
+* **Native notifications** for new chapters and download completion.
+
+## Building from source
+
+Requirements: **JDK 17** and an internet connection.
+
+```bash
+git clone https://github.com/Kokuuuuuun/Text-desktop
+cd Text-desktop
+./gradlew :desktop:packageDistributionForCurrentOS
+```
+
+Artifacts are written to `desktop/build/compose/binaries/main/`:
+
+| Format   | Path                                          |
+| -------- | --------------------------------------------- |
+| AppImage | `app/mihon-desktop-1.0.0/mihon-desktop-1.0.0.AppImage` |
+| Deb      | `deb/mihon-desktop-1.0.0-1_amd64.deb`         |
+| tar.gz   | `app/mihon-desktop-1.0.0.tar.gz` *(built by CI)* |
+
 ## Contributing
 
-[Code of conduct](./CODE_OF_CONDUCT.md) · [Contributing guide](./CONTRIBUTING.md)
+Pull requests are welcome — please open an issue first to discuss any major change.
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-Before reporting a new issue, take a look at the [FAQ](https://mihon.app/docs/faq/general), the [changelog](https://mihon.app/changelogs/) and the already opened [issues](https://github.com/mihonapp/mihon/issues); if you got any questions, join our [Discord server](https://discord.gg/mihon).
-
-
-### Repositories
-
-[![mihonapp/website - GitHub](https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=website&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/website/)
-[![mihonapp/bitmap.kt - GitHub](https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=bitmap.kt&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/bitmap.kt/)
+Before reporting a new issue, search the existing
+[issues](https://github.com/Kokuuuuuun/Text-desktop/issues) and review the upstream
+[Mihon FAQ](https://mihon.app/docs/faq/general) when in doubt about reader behaviour inherited
+from the Android app.
 
 ### Credits
 
-Thank you to all the people who have contributed!
+This would not exist without the Mihon Open Source Project and its contributors:
 
 <a href="https://github.com/mihonapp/mihon/graphs/contributors">
     <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Mihon app contributors" title="Mihon app contributors" width="800"/>
 </a>
 
+Suwayomi-Server powers the backend bridge:
+
+* [Suwayomi/Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server)
+
 ### Disclaimer
 
-The developer(s) of this application does not have any affiliation with the content providers available, and this application hosts zero content.
+The developer(s) of this application does not have any affiliation with the content providers
+available, and this application hosts zero content. Mihon Desktop is a community fork provided
+"as is" without warranty of any kind.
 
 ### License
 
 <pre>
 Copyright © 2015 Javier Tomás
 Copyright © 2024 Mihon Open Source Project
-
 Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
 
 http://www.apache.org/licenses/LICENSE-2.0
 

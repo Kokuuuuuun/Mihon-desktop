@@ -15,3 +15,11 @@ local.properties
 
 # macOS specific files
 .DS_Store
+
+# Build-logic compiled output
+gradle/build-logic/bin/
+
+# Editor / agent workspace
+.vscode/
+.claudeignore
+plans/
