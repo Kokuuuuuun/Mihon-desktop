@@ -25,6 +25,7 @@ private data class SettingsSnapshot(
     val showNsfwSources: Boolean = true,
     val defaultZoom: Float = 1f,
     val webtoonPadding: Int = 0,
+    val webtoonWidth: Float = 1f,
     val keepScreenAwake: Boolean = true,
     val librarySort: String = LibrarySort.TITLE.name,
     val libraryDisplay: String = LibraryDisplayMode.GRID.name,
@@ -74,6 +75,8 @@ object DesktopSettings {
         private set
     var webtoonPadding: Int by mutableStateOf(0)
         private set
+    var webtoonWidth: Float by mutableStateOf(1f)
+        private set
     var keepScreenAwake: Boolean by mutableStateOf(true)
         private set
     var librarySort: LibrarySort by mutableStateOf(LibrarySort.TITLE)
@@ -99,6 +102,7 @@ object DesktopSettings {
         showNsfwSources = snap.showNsfwSources
         defaultZoom = snap.defaultZoom.coerceIn(1f, 5f)
         webtoonPadding = snap.webtoonPadding.coerceIn(0, 48)
+        webtoonWidth = snap.webtoonWidth.coerceIn(0.1f, 1f)
         keepScreenAwake = snap.keepScreenAwake
         librarySort = runCatching { LibrarySort.valueOf(snap.librarySort) }.getOrDefault(LibrarySort.TITLE)
         libraryDisplay = runCatching { LibraryDisplayMode.valueOf(snap.libraryDisplay) }.getOrDefault(LibraryDisplayMode.GRID)
@@ -130,6 +134,7 @@ object DesktopSettings {
     fun updateShowNsfwSources(value: Boolean) { showNsfwSources = value; persist() }
     fun updateDefaultZoom(value: Float) { defaultZoom = value.coerceIn(1f, 5f); persist() }
     fun updateWebtoonPadding(value: Int) { webtoonPadding = value.coerceIn(0, 48); persist() }
+    fun updateWebtoonWidth(value: Float) { webtoonWidth = value.coerceIn(0.1f, 1f); persist() }
     fun updateKeepScreenAwake(value: Boolean) { keepScreenAwake = value; persist() }
     fun updateLibrarySort(value: LibrarySort) { librarySort = value; persist() }
     fun updateLibraryDisplay(value: LibraryDisplayMode) { libraryDisplay = value; persist() }
@@ -153,6 +158,7 @@ object DesktopSettings {
                         showNsfwSources = showNsfwSources,
                         defaultZoom = defaultZoom,
                         webtoonPadding = webtoonPadding,
+                        webtoonWidth = webtoonWidth,
                         keepScreenAwake = keepScreenAwake,
                         librarySort = librarySort.name,
                         libraryDisplay = libraryDisplay.name,

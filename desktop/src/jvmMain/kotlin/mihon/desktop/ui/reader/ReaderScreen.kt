@@ -27,6 +27,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.NavigateBefore
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.PhotoSizeSelectLarge
 import androidx.compose.material.icons.filled.SkipNext
 import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material.icons.filled.ViewColumn
@@ -34,6 +35,8 @@ import androidx.compose.material.icons.filled.ViewDay
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -121,6 +124,8 @@ data class ReaderScreen(
         var mode by remember { mutableStateOf(if (DesktopSettings.defaultWebtoon) ReaderMode.WEBTOON else ReaderMode.PAGED) }
         var controlsVisible by remember { mutableStateOf(true) }
         var currentPage by remember { mutableStateOf(0) }
+        var widthMenuOpen by remember { mutableStateOf(false) }
+        var webtoonWidth by remember { mutableStateOf(DesktopSettings.webtoonWidth) }
 
         LaunchedEffect(chapterId) {
             pagesState = LoadState.Loading
@@ -193,6 +198,39 @@ data class ReaderScreen(
                                     modifier = Modifier.padding(end = 4.dp),
                                 )
                             }
+                            // Webtoon-only: adjust the strip width so images don't span the full
+                            // viewport (useful when a page is too wide to read comfortably).
+                            if (mode == ReaderMode.WEBTOON) {
+                                Box {
+                                    IconButton(onClick = { widthMenuOpen = !widthMenuOpen }) {
+                                        Icon(
+                                            Icons.Filled.PhotoSizeSelectLarge,
+                                            contentDescription = "Ancho de imagen (webtoon)",
+                                        )
+                                    }
+                                    DropdownMenu(expanded = widthMenuOpen, onDismissRequest = { widthMenuOpen = false }) {
+                                        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).width(220.dp)) {
+                                            Text(
+                                                "Ancho de imagen: ${(webtoonWidth * 100).toInt()}%",
+                                                style = MaterialTheme.typography.labelMedium,
+                                            )
+                                            Spacer(Modifier.height(8.dp))
+                                            Slider(
+                                                value = webtoonWidth,
+                                                onValueChange = { webtoonWidth = it },
+                                                valueRange = 0.1f..1f,
+                                                onValueChangeFinished = { DesktopSettings.updateWebtoonWidth(webtoonWidth) },
+                                            )
+                                            Spacer(Modifier.height(4.dp))
+                                            Text(
+                                                "10% — 100% del ancho de la ventana. El cambio se conserva para la próxima lectura.",
+                                                style = MaterialTheme.typography.bodySmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            )
+                                        }
+                                    }
+                                }
+                            }
                             IconButton(onClick = { mode = if (mode == ReaderMode.PAGED) ReaderMode.WEBTOON else ReaderMode.PAGED }) {
                                 Icon(
                                     if (mode == ReaderMode.PAGED) Icons.Filled.ViewDay else Icons.Filled.ViewColumn,
@@ -239,6 +277,7 @@ data class ReaderScreen(
                             seekTarget = seekTarget,
                             onPageIndex = { currentPage = it },
                             gapPadding = DesktopSettings.webtoonPadding,
+                            widthFraction = webtoonWidth,
                         )
                     }
                 }
@@ -495,6 +534,7 @@ private fun WebtoonReader(
     seekTarget: androidx.compose.runtime.MutableState<Int?>,
     onPageIndex: (Int) -> Unit,
     gapPadding: Int = 0,
+    widthFraction: Float = 1f,
 ) {
     val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
@@ -518,14 +558,15 @@ private fun WebtoonReader(
     }
     LazyColumn(state = listState, modifier = Modifier.fillMaxSize().background(Color.Black)) {
         items(pages) { url ->
-            WebtoonPage(url = url, gapPadding = gapPadding)
+            WebtoonPage(url = url, gapPadding = gapPadding, widthFraction = widthFraction)
         }
     }
 }
 
-/** A single webtoon strip: full-width image with per-page loading + error affordance. */
+/** A single webtoon strip: image scaled to [widthFraction] of the viewport width (1 = full width,
+ *  less = narrower strip centered in the column) with per-page loading + error affordance. */
 @Composable
-private fun WebtoonPage(url: String, gapPadding: Int) {
+private fun WebtoonPage(url: String, gapPadding: Int, widthFraction: Float = 1f) {
     var state by remember(url) { mutableStateOf<PageState>(PageState.Loading) }
     var retryKey by remember(url) { mutableStateOf(0) }
     val painter = rememberAsyncImagePainter(
@@ -552,7 +593,7 @@ private fun WebtoonPage(url: String, gapPadding: Int) {
             painter = painter,
             contentDescription = null,
             contentScale = ContentScale.FillWidth,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(widthFraction.coerceIn(0.1f, 1f)),
         )
         when (val s = state) {
             is PageState.Loading -> CircularProgressIndicator(

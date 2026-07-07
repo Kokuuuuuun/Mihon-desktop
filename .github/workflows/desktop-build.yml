@@ -29,6 +29,10 @@ jobs:
   build-desktop:
     name: Build Desktop (AppImage / tar.gz / deb)
     runs-on: ubuntu-22.04
+    permissions:
+      # Job-level grant so the "Publish Pre-release" step can create a GitHub release.
+      # Only `contents` is widened; no PRs are created and nothing else is granted.
+      contents: write
 
     steps:
       - name: Checkout
@@ -92,3 +96,30 @@ jobs:
           name: mihon-desktop-portable-targz-${{ github.sha }}
           path: desktop/build/compose/binaries/main/app/*.tar.gz
           if-no-files-found: error
+
+      # Publish the packaged binaries as a GitHub Pre-release (only on the linux/main
+      # branches). No PR is opened; `make_latest: false` + `prerelease: true` mark it.
+      - name: Publish Pre-release
+        if: github.ref == 'refs/heads/linux' || github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: prerelease-${{ github.sha }}
+          name: Mihon Desktop (pre-release ${{ github.sha }})
+          body: |
+            Automated pre-release build from branch `${{ github.ref_name }}` @ ${{ github.sha }}.
+
+            Artifacts:
+            - `mihon-desktop-*.deb` — Debian package (amd64).
+            - `mihon-desktop-*.tar.gz` — portable app-image bundle (self-contained runtime).
+
+            This UI is an early, work-in-progress preview, built and tested with Java 21. It will be
+            greatly improved in the future and is subject to many changes — some of which may match
+            the original Mihon design, and some which may not.
+          prerelease: true
+          make_latest: false
+          fail_on_unmatched_files: true
+          files: |
+            desktop/build/compose/binaries/main/deb/*.deb
+            desktop/build/compose/binaries/main/app/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
