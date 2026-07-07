@@ -52,11 +52,15 @@ jobs:
       - name: Build AppImage + Deb
         run: ./gradlew :desktop:packageDistributionForCurrentOS
 
-      - name: Collect AppImage
+      # Compose's TargetFormat.AppImage produces an app-image *directory* (a
+      # self-contained runtime: bin/, lib/, runtime/ + launcher), not a single
+      # .AppImage file. Upload that directory tree as the "AppImage" artifact; the
+      # portable single-file archive is produced below as the .tar.gz artifact.
+      - name: Collect AppImage (app-image directory)
         uses: actions/upload-artifact@v4
         with:
           name: mihon-desktop-AppImage-${{ github.sha }}
-          path: desktop/build/compose/binaries/main/app/mihon-desktop-*/*.AppImage
+          path: desktop/build/compose/binaries/main/app/mihon-desktop-*
           if-no-files-found: error
 
       - name: Collect Deb
