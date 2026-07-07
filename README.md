@@ -9,7 +9,7 @@
 ### Desktop fork of Mihon
 
 Discover and read manga, webtoons and comics on **Linux** — a desktop port of the
-[Mihon](https://github.com/mihonapp/mihon) Android reader, built with KDE Multiplatform's
+[Mihon](https://github.com/mihonapp/mihon) Android reader, built with JetBrains'
 [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform) and an embedded
 [Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server) backend.
 
@@ -23,7 +23,7 @@ UI and source-engine architecture goes to the Mihon contributors.
 ## Download
 
 Build artifacts are produced automatically by GitHub Actions for every push to the
-`desktop` branch:
+`linux` branch:
 
 * **AppImage** — portable single-file runtime, just `chmod +x` and run.
 * **tar.gz** — portable archive containing the bundled app-image + JVM runtime.

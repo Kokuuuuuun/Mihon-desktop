@@ -3,7 +3,7 @@ name: Desktop Build
 on:
   push:
     branches:
-      - desktop
+      - linux
       - main
     paths:
       - 'desktop/**'
@@ -19,7 +19,7 @@ on:
       - '.github/workflows/desktop-build.yml'
   pull_request:
     branches:
-      - desktop
+      - linux
   workflow_dispatch:
 
 permissions:
