@@ -21,8 +21,8 @@ kotlin {
         jvmMain.dependencies {
             // currentOs brings the desktop runtime (skiko) + foundation + ui + material.
             implementation(compose.desktop.currentOs)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
+            implementation("org.jetbrains.compose.material3:material3:${libs.versions.compose.multiplatform.get()}")
+            implementation("org.jetbrains.compose.material:material-icons-extended:${libs.versions.compose.multiplatform.get()}")
 
             // Navigation (multiplatform, same as Mihon Android).
             implementation(libs.bundles.voyager)
@@ -31,7 +31,7 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             // Image loading (covers + reader pages) from Suwayomi REST endpoints.
-            implementation(compose.components.resources)
+            implementation("org.jetbrains.compose.components:components-resources:${libs.versions.compose.multiplatform.get()}")
             implementation(libs.coil.compose)
             implementation(libs.coil.core)
             implementation(libs.coil.network.okhttp)
@@ -58,7 +58,7 @@ val suwayomiBundleDir = layout.projectDirectory.dir("resources")
 
 // Copy any bundled Suwayomi-Server jar (drop it in desktop/resources/) into the app-image's runtime
 // resources dir before packaging, so the app can launch an embedded server when no env override is set.
-val copySuwayomiJar by tasks.registering(Copy::class) {
+val copySuwayomiJar = tasks.register<Copy>("copySuwayomiJar") {
     from(suwayomiBundleDir) { include("Suwayomi-Server*.jar") }
     into(layout.buildDirectory.dir("compose/binaries/main/app/mihon-desktop/app"))
 }
@@ -83,7 +83,6 @@ compose.desktop {
             vendor = "Mihon"
             // Linux packaging metadata used by jpackage when generating the .deb.
             linux {
-                autoprefix = true
                 iconFile.set(rootProject.layout.projectDirectory.file(".github/assets/logo.png"))
             }
 
