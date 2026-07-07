@@ -56,11 +56,12 @@ jobs:
       # self-contained runtime: bin/, lib/, runtime/ + launcher), not a single
       # .AppImage file. Upload that directory tree as the "AppImage" artifact; the
       # portable single-file archive is produced below as the .tar.gz artifact.
+      # The dir name is the package name (mihon-desktop) — no version suffix here.
       - name: Collect AppImage (app-image directory)
         uses: actions/upload-artifact@v4
         with:
           name: mihon-desktop-AppImage-${{ github.sha }}
-          path: desktop/build/compose/binaries/main/app/mihon-desktop-*
+          path: desktop/build/compose/binaries/main/app/mihon-desktop
           if-no-files-found: error
 
       - name: Collect Deb
@@ -74,8 +75,9 @@ jobs:
         run: |
           set -euo pipefail
           BUILD_DIR="desktop/build/compose/binaries/main/app"
-          # The Compose plugin appends a versioned directory (mihon-desktop-1.0.0).
-          IMAGE_DIR="$(find "$BUILD_DIR" -maxdepth 1 -type d -name 'mihon-desktop-*' | head -n1)"
+          # Match the app-image dir whether it's bare (mihon-desktop) or versioned
+          # (mihon-desktop-1.0.0), depending on the Compose plugin's configuring.
+          IMAGE_DIR="$(find "$BUILD_DIR" -maxdepth 1 -type d -name 'mihon-desktop*' | head -n1)"
           if [ -z "${IMAGE_DIR}" ]; then
             echo "App-image directory not found"; exit 1
           fi
