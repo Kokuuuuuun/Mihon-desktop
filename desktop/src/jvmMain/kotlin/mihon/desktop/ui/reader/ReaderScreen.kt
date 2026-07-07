@@ -81,7 +81,6 @@ import coil3.PlatformContext
 import coil3.compose.AsyncImagePainter.State
 import coil3.compose.rememberAsyncImagePainter
 import coil3.request.ImageRequest
-import coil3.request.setParameter
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import mihon.desktop.bridge.ChapterDto
@@ -420,7 +419,8 @@ private fun ZoomablePage(url: String, defaultZoom: Float = 1f) {
         val painter = rememberAsyncImagePainter(
             model = coil3.request.ImageRequest.Builder(PlatformContext.INSTANCE)
                 .data(url)
-                .setParameter("retry", retryKey.toString())
+                .memoryCacheKey("$url#retry=$retryKey")
+                .diskCacheKey("$url#retry=$retryKey")
                 .build(),
             onState = { st ->
                 state = when (st) {
@@ -531,7 +531,8 @@ private fun WebtoonPage(url: String, gapPadding: Int) {
     val painter = rememberAsyncImagePainter(
         model = coil3.request.ImageRequest.Builder(PlatformContext.INSTANCE)
             .data(url)
-            .setParameter("retry", retryKey.toString())
+            .memoryCacheKey("$url#retry=$retryKey")
+            .diskCacheKey("$url#retry=$retryKey")
             .build(),
         onState = { st ->
             state = when (st) {
