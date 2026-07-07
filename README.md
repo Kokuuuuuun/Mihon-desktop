@@ -1,78 +1,74 @@
 <div align="center">
 
 <a href="https://mihon.app">
-    <img src="./.github/assets/logo.png" alt="Mihon logo" title="Mihon logo" width="80"/>
+    <img src="./.github/assets/logo.png" alt="Mihon Desktop logo" title="Mihon Desktop logo" width="80"/>
 </a>
 
-# Mihon [App](#)
+# Mihon Desktop
 
-### Full-featured reader
-Discover and read manga, webtoons, comics, and more – easier than ever on your Android device.
+### A community desktop fork of [Mihon](https://github.com/mihonapp/mihon)
 
-[![Discord server](https://img.shields.io/discord/1195734228319617024.svg?label=&labelColor=6A7EC2&color=7389D8&logo=discord&logoColor=FFFFFF)](https://discord.gg/mihon)
-[![GitHub downloads](https://img.shields.io/github/downloads/mihonapp/mihon/total?label=downloads&labelColor=27303D&color=0D1117&logo=github&logoColor=FFFFFF&style=flat)](https://mihon.app/download)
+Mihon Desktop is an independent, community-driven effort to bring the Mihon manga reader
+to the desktop — starting with **Linux** and with **Windows** planned for the future. It is
+built with JetBrains' [Compose Multiplatform](https://github.com/JetBrains/compose-multiplatform)
+and embeds a local [Suwayomi-Server](https://github.com/Suwayomi/Suwayomi-Server) instance so
+the reader works out of the box without external setup.
 
-[![CI](https://img.shields.io/github/actions/workflow/status/mihonapp/mihon/build.yml?labelColor=27303D)](https://github.com/mihonapp/mihon/actions/workflows/build_push.yml)
-[![License: Apache-2.0](https://img.shields.io/github/license/mihonapp/mihon?labelColor=27303D&color=0877d2)](/LICENSE)
-[![Translation status](https://img.shields.io/weblate/progress/mihon?labelColor=27303D&color=946300)](https://hosted.weblate.org/engage/mihon/)
+> ⚠️ This project is **not** affiliated with, endorsed by, or officially maintained by the
+> Mihon Open Source Project. All credit for the reader, UI and source-engine architecture
+> goes to the [Mihon contributors](https://github.com/mihonapp/mihon/graphs/contributors).
+> This fork is provided "as is" without warranty of any kind.
 
-## Download
+[![License: Apache-2.0](https://img.shields.io/github/license/Kokuuuuuun/Text-desktop?labelColor=27303D&color=0877d2)](/LICENSE)
 
-[![Mihon Stable](https://img.shields.io/github/release/mihonapp/mihon.svg?maxAge=3600&label=Stable&labelColor=06599d&color=043b69)](https://mihon.app/download)
-[![Mihon Beta](https://img.shields.io/github/v/release/mihonapp/mihon-preview.svg?maxAge=3600&label=Beta&labelColor=2c2c47&color=1c1c39)](https://mihon.app/download)
+## Branch layout
 
-*Requires Android 8.0 or higher.*
+This repository is organised per target platform. `main` is the common entry point and
+holds the platform-agnostic documentation; each desktop target lives in its own branch:
 
-## Features
+| Branch     | Status      | What it contains                                                           |
+| ---------- | ----------- | -------------------------------------------------------------------------- |
+| `main`     | ✅ active   | Fork overview, shared docs, upstream-sync base for new platform branches.  |
+| `linux`    | ✅ active   | Working Linux build (AppImage / portable tar.gz / deb) + Tray fix + CI.     |
+| `windows`  | 🚧 planned  | Windows (MSI / portable zip) build, branched off `main` when work begins.   |
+
+To get a runnable build **today**, check out the [`linux`](https://github.com/Kokuuuuuun/Text-desktop/tree/linux)
+branch. The `windows` branch does not exist yet — it will be created from `main` (keeping the
+original platform-agnostic history) once Windows packaging starts.
+
+## Features shared across platforms
 
 <div align="left">
 
-* Local reading of content.
-* A configurable reader with multiple viewers, reading directions and other settings.
-* Tracker support: [MyAnimeList](https://myanimelist.net/), [AniList](https://anilist.co/), [Kitsu](https://kitsu.app/), [MangaUpdates](https://mangaupdates.com), [Shikimori](https://shikimori.one), and [Bangumi](https://bgm.tv/) support.
-* Categories to organize your library.
-* Light and dark themes.
-* Schedule updating your library for new chapters.
-* Create backups locally to read offline or to your desired cloud service.
-* Plus much more...
+* Compose Multiplatform UI reusing Mihon's themes, colour schemes and typography.
+* Embedded **Suwayomi-Server** managed automatically on launch (no manual server setup).
+* Library, browse, updates, history, downloads and reader screens.
+* Coil-based image loading of covers and reader pages over the Suwayomi REST/GraphQL bridge.
+* System-tray integration gated by `isTraySupported` so it never crashes on headless platforms.
 
 </div>
 
+See the [`linux` branch README](https://github.com/Kokuuuuuun/Text-desktop/blob/linux/README.md)
+for the platform-specific download links, build instructions and the live roadmap of
+upcoming features.
+
 ## Contributing
 
-[Code of conduct](./CODE_OF_CONDUCT.md) · [Contributing guide](./CONTRIBUTING.md)
+Pull requests are welcome — please open an issue first to discuss any major change. Platform
+work should target the corresponding platform branch (`linux` or, eventually, `windows`); only
+shared documentation changes belong on `main`.
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+## Disclaimer
 
-Before reporting a new issue, take a look at the [FAQ](https://mihon.app/docs/faq/general), the [changelog](https://mihon.app/changelogs/) and the already opened [issues](https://github.com/mihonapp/mihon/issues); if you got any questions, join our [Discord server](https://discord.gg/mihon).
+The developer(s) of this application do not have any affiliation with the content providers
+available, and this application hosts zero content.
 
-
-### Repositories
-
-[![mihonapp/website - GitHub](https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=website&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/website/)
-[![mihonapp/bitmap.kt - GitHub](https://github-readme-stats.vercel.app/api/pin/?username=mihonapp&repo=bitmap.kt&bg_color=161B22&text_color=c9d1d9&title_color=0877d2&icon_color=0877d2&border_radius=8&hide_border=true&description_lines_count=2)](https://github.com/mihonapp/bitmap.kt/)
-
-### Credits
-
-Thank you to all the people who have contributed!
-
-<a href="https://github.com/mihonapp/mihon/graphs/contributors">
-    <img src="https://contrib.rocks/image?repo=mihonapp/mihon" alt="Mihon app contributors" title="Mihon app contributors" width="800"/>
-</a>
-
-### Disclaimer
-
-The developer(s) of this application does not have any affiliation with the content providers available, and this application hosts zero content.
-
-### License
+## License
 
 <pre>
 Copyright © 2015 Javier Tomás
 Copyright © 2024 Mihon Open Source Project
-
 Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
 
 http://www.apache.org/licenses/LICENSE-2.0
 
